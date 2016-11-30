@@ -3,7 +3,9 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bson.Document;
 
@@ -92,18 +94,44 @@ public class mongoBench {
 		System.out.println("ms.");
 		System.out.println();
 		
-		BasicDBObject objectOne = new BasicDBObject("sum", new BasicDBObject("$sum", "$number_of_employees"));
-		BasicDBObject empty = new BasicDBObject();
-		BasicDBObject nullID = new BasicDBObject("_id", "null");
-		/*
-		Iterable<DBObject> output = coll.aggregate(Arrays.asList((DBObject) objectOne )).results();
-		for (DBObject dbObject : output){
-	        System.out.println(dbObject);
-	    } 
-		*/
+		// Project each distinct category code
+		// using the aggregation pipeline
+		List<String> distinctCategories = this.coll.distinct("category_code");
+		System.out.println(distinctCategories);
 		
+		// Sum the total number of employees across all companies
+		// using the aggregation pipeline
+		BasicDBObject objectOne = new BasicDBObject("sum", new BasicDBObject("$sum", "$number_of_employees"));
 		AggregationOutput outputOne = this.coll.aggregate(Arrays.asList(
-				(DBObject) new BasicDBObject("$group", nullID.append("sum", objectOne))));
+				(DBObject) new BasicDBObject("$project", objectOne)));
 				
+		// Group companies by the year they were founded in
+		// using the aggregation pipeline
+		BasicDBObject companyName = new BasicDBObject("$company", "$company_name");
+		BasicDBObject foundedYear = new BasicDBObject("Year", new BasicDBObject("$year", "$founded_year"));
+		BasicDBObject objectTwo = new BasicDBObject("$group", new BasicDBObject("$_id", foundedYear).append("Company", companyName));
+		AggregationOutput outputTwo = this.coll.aggregate(Arrays.asList((DBObject) objectTwo));
+		
+		
+		
+		// Project the four URLs for each company
+		// (Crunchbase URL, Homepage URL, Blog URL, Blog Feed URL)
+		// using the aggregation pipeline
+		BasicDBObject crunchURL = new BasicDBObject("cruchURL", new BasicDBObject("$crunchURL", "$crunchbase_url"));
+		BasicDBObject homepageURL = new BasicDBObject("$homepageURL", "$homepage_url");
+		BasicDBObject blogURL = new BasicDBObject("$blogURL", "$blog_url");
+		BasicDBObject blogfeedURL = new BasicDBObject("$blogfeedURL", "$blog_feed_url");
+		BasicDBObject objectFour = new BasicDBObject("$project", crunchURL.append("homepageURL", homepageURL).append("blogURL", blogURL).append("blogfeedURL", blogfeedURL));
+		AggregationOutput outputFour = this.coll.aggregate(Arrays.asList((DBObject) objectFour));
+		
+		// Project all companies that were founded after
+		// the year 2010 using the aggregation pipeline
+		BasicDBObject filterInput = new BasicDBObject("$input", "$founded_year");
+		BasicDBObject filterCond = new BasicDBObject("gte", Arrays.asList("$$year", 2010));
+		BasicDBObject filter = new BasicDBObject("$filter", filterInput.append("as", "year").append("cond", filterCond));
+		BasicDBObject filterByYear = new BasicDBObject("founded_after_2010", filter);
+		BasicDBObject objectFive = new BasicDBObject("$project", filterByYear);
+		AggregationOutput outputFive = this.coll.aggregate(Arrays.asList((DBObject) objectFive));
+		
 	}
 }
