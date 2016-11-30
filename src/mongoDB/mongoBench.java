@@ -96,8 +96,18 @@ public class mongoBench {
 		
 		// Project each distinct category code
 		// using the aggregation pipeline
+		startTime = System.nanoTime();
 		List<String> distinctCategories = this.coll.distinct("category_code");
-		System.out.println(distinctCategories);
+		endTime = System.nanoTime();
+		duration = (endTime - startTime) / 1000000;
+		System.out.println("Distinct Category Codes: ");
+		for(int i = 0; i < distinctCategories.size(); ++i){
+			System.out.println(distinctCategories.get(i));
+		}
+		System.out.print("Time Elapsed: ");
+		System.out.print(duration);
+		System.out.println("ms.");
+		System.out.println();
 		
 		// Sum the total number of employees across all companies
 		// using the aggregation pipeline
