@@ -1,42 +1,30 @@
 package mongoDB;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+import org.bson.BsonValue;
 import org.bson.Document;
-
-import com.mongodb.AggregationOutput;
-import com.mongodb.DBObject;
-/*
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-*/
 import com.mongodb.MongoClient;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.BasicDBObject;
-//import org.bson.Document;
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.Block;
+import static com.mongodb.client.model.Projections.*;
+import static com.mongodb.client.model.Filters.*;
 
 public class mongoBench {
 	private MongoClient mongoClient;
-	private DB db;
-	private DBCollection coll;
+	private MongoDatabase db;
+	private MongoCollection<Document> coll;
 	
 	public mongoBench(){
-		try {
-			mongoClient = new MongoClient();
-			db = mongoClient.getDB( "mqpBench" );
-			coll = db.getCollection( "mainData" );
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+	
+		mongoClient = new MongoClient();
+		db = mongoClient.getDatabase( "mqpBench" );
+		coll = db.getCollection( "mainData" );
+	
 		
 	}
 	
@@ -69,15 +57,15 @@ public class mongoBench {
 		// 18,801 total documents in collection
 		System.out.print("Number of Documents in Collection: ");
 		System.out.println(this.coll.count());
-		
+		/*
 		long startTime = System.nanoTime();
 		// Sum the total number of employees across all companies
 		// using a full scan
 		int sumEmployees = 0;
-		BasicDBObject query = new BasicDBObject();
-		BasicDBObject field = new BasicDBObject();
+		Document query = new Document();
+		Document field = new Document();
 		field.put("number_of_employees", 1);
-		DBCursor cursor = this.coll.find(query, field);
+		FindIterable cursor = this.coll.find(query, field);
 		System.out.println(cursor.next());
 		while (cursor.hasNext()){ 
 			BasicDBObject obj = (BasicDBObject) cursor.next();
@@ -93,55 +81,131 @@ public class mongoBench {
 		System.out.print(duration);
 		System.out.println("ms.");
 		System.out.println();
+		*/
 		
-		// Project each distinct category code
+		/*
+		db.mainData.aggregate({ $group: {
+									_id: '', 
+									sum: { $sum: '$number_of_employees }
+										}
+								}, 
+								{$project: { 
+									_id: 0, 
+									sum: '$sum' }
+								})
+		*/
+		// Sum the total number of employees across all companies
 		// using the aggregation pipeline
-		startTime = System.nanoTime();
-		List<String> distinctCategories = this.coll.distinct("category_code");
-		endTime = System.nanoTime();
-		duration = (endTime - startTime) / 1000000;
-		System.out.println("Distinct Category Codes: ");
-		for(int i = 0; i < distinctCategories.size(); ++i){
-			System.out.println(distinctCategories.get(i));
-		}
-		System.out.print("Time Elapsed: ");
+		Document sum = new Document("$sum", "$number_of_employees");
+		Document idSum = new Document( "_id", "").append("sum", sum);
+		Document groupSum = new Document( "$group", idSum);
+		Document pidSum = new Document( "_id", "$0").append("sum", "$sum");
+		Document projectSum = new Document("$project", pidSum);
+		long startTime = System.nanoTime();
+		AggregateIterable<Document> outputOne = this.coll.aggregate(Arrays.asList(
+				groupSum, projectSum));
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;
+		
+		outputOne.forEach(new Block<Document>() {
+		    @Override
+		    public void apply(final Document document) {
+		        System.out.println(document.toJson());
+		    }
+		});
+			
+		System.out.print("#1 Time Elapsed: ");
 		System.out.print(duration);
 		System.out.println("ms.");
 		System.out.println();
 		
-		// Sum the total number of employees across all companies
-		// using the aggregation pipeline
-		BasicDBObject objectOne = new BasicDBObject("sum", new BasicDBObject("$sum", "$number_of_employees"));
-		AggregationOutput outputOne = this.coll.aggregate(Arrays.asList(
-				(DBObject) new BasicDBObject("$project", objectOne)));
-				
+		/* db.mainData.aggregate([{ "$group" : { _id: "$founded_year", count: {$sum:1}}}])  */
 		// Group companies by the year they were founded in
 		// using the aggregation pipeline
-		BasicDBObject companyName = new BasicDBObject("$company", "$company_name");
-		BasicDBObject foundedYear = new BasicDBObject("Year", new BasicDBObject("$year", "$founded_year"));
-		BasicDBObject objectTwo = new BasicDBObject("$group", new BasicDBObject("$_id", foundedYear).append("Company", companyName));
-		AggregationOutput outputTwo = this.coll.aggregate(Arrays.asList((DBObject) objectTwo));
+		Document count = new Document("$sum", 1);
+		Document id = new Document("_id", "$founded_year");
+		Document objectTwo = new Document("$group", id.append("count", count));
+		startTime = System.nanoTime();
+		AggregateIterable<Document> outputTwo = this.coll.aggregate(Arrays.asList(objectTwo));
+		endTime = System.nanoTime();
+		duration = (endTime - startTime) / 1000000;
+		
+		outputTwo.forEach(new Block<Document>() {
+		    @Override
+		    public void apply(final Document document) {
+		        System.out.println(document.toJson());
+		    }
+		});
+		
+		System.out.print("#2 Time Elapsed: ");
+		System.out.print(duration);
+		System.out.println("ms.");
+		System.out.println();
+		
+		// Project each distinct category code
+		// using the aggregation pipeline
+		startTime = System.nanoTime();
+		ArrayList<String> distinctCategories = 
+				this.coll.distinct("category_code", String.class)
+					.filter(new Document("category_code",new Document("$ne",null)))
+						.into(new ArrayList<String>());;
+		endTime = System.nanoTime();
+		duration = (endTime - startTime) / 1000000;
+		System.out.println("Distinct Category Codes: ");
+		for(String cat : distinctCategories){
+			System.out.println(cat);
+		}
+		
+		System.out.print("#3 Time Elapsed: ");
+		System.out.print(duration);
+		System.out.println("ms.");
+		System.out.println();
 		
 		
+		/* db.mainData.find( {}, { crunchbase_url: 1, blog_url: 1, blog_feed_url: 1, homepage_url: 1} ) */
 		
 		// Project the four URLs for each company
 		// (Crunchbase URL, Homepage URL, Blog URL, Blog Feed URL)
 		// using the aggregation pipeline
-		BasicDBObject crunchURL = new BasicDBObject("cruchURL", new BasicDBObject("$crunchURL", "$crunchbase_url"));
-		BasicDBObject homepageURL = new BasicDBObject("$homepageURL", "$homepage_url");
-		BasicDBObject blogURL = new BasicDBObject("$blogURL", "$blog_url");
-		BasicDBObject blogfeedURL = new BasicDBObject("$blogfeedURL", "$blog_feed_url");
-		BasicDBObject objectFour = new BasicDBObject("$project", crunchURL.append("homepageURL", homepageURL).append("blogURL", blogURL).append("blogfeedURL", blogfeedURL));
-		AggregationOutput outputFour = this.coll.aggregate(Arrays.asList((DBObject) objectFour));
+		Document cbURL = new Document("_id", "$crunchbase_url");
+		startTime = System.nanoTime();
+		FindIterable<Document> outputFour = 
+				this.coll.find().projection(include("crunchbase_url", 
+						"homepage_url", "blog_url", "blog_feed_url"));
+		endTime = System.nanoTime();
+		duration = (endTime - startTime) / 1000000;
+		/*
+		outputFour.forEach(new Block<Document>() {
+		    @Override
+		    public void apply(final Document document) {
+		        System.out.println(document.toJson());
+		    }
+		});
+		*/
+		System.out.print("#4 Time Elapsed: ");
+		System.out.print(duration);
+		System.out.println("ms.");
+		System.out.println();
+		
 		
 		// Project all companies that were founded after
 		// the year 2010 using the aggregation pipeline
-		BasicDBObject filterInput = new BasicDBObject("$input", "$founded_year");
-		BasicDBObject filterCond = new BasicDBObject("gte", Arrays.asList("$$year", 2010));
-		BasicDBObject filter = new BasicDBObject("$filter", filterInput.append("as", "year").append("cond", filterCond));
-		BasicDBObject filterByYear = new BasicDBObject("founded_after_2010", filter);
-		BasicDBObject objectFive = new BasicDBObject("$project", filterByYear);
-		AggregationOutput outputFive = this.coll.aggregate(Arrays.asList((DBObject) objectFive));
+		startTime = System.nanoTime();
+		FindIterable<Document> outputFive = this.coll.find(gt("founded_year", 2010));
+		endTime = System.nanoTime();
+		duration = (endTime - startTime) / 1000000;
+		/*
+		outputFive.forEach(new Block<Document>() {
+		    @Override
+		    public void apply(final Document document) {
+		        System.out.println(document.toJson());
+		    }
+		});
+		*/
+		System.out.print("#5 Time Elapsed: ");
+		System.out.print(duration);
+		System.out.println("ms.");
+		System.out.println();
 		
 	}
 }
