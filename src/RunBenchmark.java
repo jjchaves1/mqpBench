@@ -1,3 +1,6 @@
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+
 import mongoDB.mongoBench;
 public class RunBenchmark {
 
@@ -8,7 +11,15 @@ public class RunBenchmark {
 		}
 		// TODO Auto-generated method stub
 		mongoBench mBench = new mongoBench();
-		mBench.aggregate(queryNum);
+		try {
+			mBench.aggregate(queryNum);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
