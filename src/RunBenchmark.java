@@ -5,19 +5,20 @@ import mongoDB.mongoBench;
 public class RunBenchmark {
 
 	public static void main(String[] args) {
+		// Default query option
 		int queryNum = 1;
 		if(args.length > 0){
+			// Query to run is taken as a command line argument
 			queryNum = Integer.parseInt(args[0]);
 		}
-		// TODO Auto-generated method stub
+		// Create a mongoBench instance
 		mongoBench mBench = new mongoBench();
 		try {
+			// Run query 
 			mBench.aggregate(queryNum);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
