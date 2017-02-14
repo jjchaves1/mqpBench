@@ -60,6 +60,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeOne = "#1 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer1 = new PrintWriter("Q1Results.txt", "UTF-8");
 			outputOne.forEach(new Block<Document>() {
 			    @Override
@@ -68,10 +69,9 @@ public class mongoBench {
 			        writer1.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#1 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer1.println(timeOne);
+			System.out.println(timeOne);
 			System.out.println();
 			break;
 		case 2:
@@ -90,6 +90,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeTwo = "#2 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer2 = new PrintWriter("Q2Results.txt", "UTF-8");
 			outputTwo.forEach(new Block<Document>() {
 			    @Override
@@ -98,10 +99,9 @@ public class mongoBench {
 			        writer2.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#2 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer2.println(timeTwo);
+			System.out.println(timeTwo);
 			System.out.println();
 			break;
 		case 3:
@@ -116,16 +116,16 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeThree = "#3 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer3 = new PrintWriter("Q3Results.txt", "UTF-8");
 			System.out.println("Distinct Category Codes: ");
 			for(String cat : distinctCategories){
 				System.out.println(cat);
 				writer3.println(cat);
 			}
-			// Print statistics to console
-			System.out.print("#3 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer3.println(timeThree);
+			System.out.println(timeThree);
 			System.out.println();
 			break;
 		case 4:
@@ -142,6 +142,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeFour = "#4 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer4 = new PrintWriter("Q4Results.txt", "UTF-8");
 			outputFour.forEach(new Block<Document>() {
 			    @Override
@@ -150,10 +151,9 @@ public class mongoBench {
 			        writer4.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#4 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer4.println(timeFour);
+			System.out.println(timeFour);
 			System.out.println();
 			break;
 		case 5:
@@ -165,6 +165,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeFive = "#5 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer5 = new PrintWriter("Q5Results.txt", "UTF-8");
 			outputFive.forEach(new Block<Document>() {
 			    @Override
@@ -173,10 +174,9 @@ public class mongoBench {
 			        writer5.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#5 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer5.println(timeFive);
+			System.out.println(timeFive);
 			System.out.println();
 			break;
 			
@@ -195,16 +195,16 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeSix = "#6 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer6 = new PrintWriter("Q6Results.txt", "UTF-8");
 			System.out.println("Distinct Category Codes: ");
 			for(String code : distinctPriceCurrCode){
 				System.out.println(code);
 				writer6.println(code);
 			}
-			// Print statistics to console
-			System.out.print("#6 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer6.println(timeSix);
+			System.out.println(timeSix);
 			System.out.println();
 			break;
 		case 7:
@@ -230,6 +230,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeSeven = "#7 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer7 = new PrintWriter("Q7Results.txt", "UTF-8");
 			outputSeven.forEach(new Block<Document>() {
 			    @Override
@@ -238,10 +239,9 @@ public class mongoBench {
 			        writer7.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#7 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer7.println(timeSeven);
+			System.out.println(timeSeven);
 			System.out.println();
 			break;
 		case 8:
@@ -269,6 +269,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeEight = "#8 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer8 = new PrintWriter("Q8Results.txt", "UTF-8");
 			outputEight.forEach(new Block<Document>() {
 			    @Override
@@ -277,10 +278,9 @@ public class mongoBench {
 			        writer8.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#8 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer8.println(timeEight);
+			System.out.println(timeEight);
 			System.out.println();
 			break;
 		case 9:
@@ -304,6 +304,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeNine = "#9 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer9 = new PrintWriter("Q9Results.txt", "UTF-8");
 			outputNine.forEach(new Block<Document>() {
 			    @Override
@@ -312,10 +313,9 @@ public class mongoBench {
 			        writer9.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#9 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer9.println(timeNine);
+			System.out.println(timeNine);
 			System.out.println();
 			break;
 		case 10:
@@ -329,6 +329,7 @@ public class mongoBench {
 			endTime = System.nanoTime();
 			duration = (endTime - startTime) / 1000000;
 			// Write results to file & print to console
+			String timeTen = "#10 Time Elapsed: " + duration + "ms.";
 			PrintWriter writer10 = new PrintWriter("Q10Results.txt", "UTF-8");
 			outputTen.forEach(new Block<Document>() {
 			    @Override
@@ -337,10 +338,9 @@ public class mongoBench {
 			        writer10.println(document.toJson());
 			    }
 			});
-			// Print statistics to console
-			System.out.print("#10 Time Elapsed: ");
-			System.out.print(duration);
-			System.out.println("ms.");
+			// Print statistics to console and file
+			writer10.println(timeTen);
+			System.out.println(timeTen);
 			System.out.println();
 			break;
 		}
