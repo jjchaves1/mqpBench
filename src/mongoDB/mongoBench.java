@@ -58,9 +58,9 @@ public class mongoBench {
 			AggregateIterable<Document> outputOne = this.coll.aggregate(Arrays.asList(
 					groupSum, projectSum));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeOne = "#1 Time Elapsed: " + duration + "ms.";
+			String timeOne = "#1 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer1 = new PrintWriter("Q1Results.txt", "UTF-8");
 			outputOne.forEach(new Block<Document>() {
 			    @Override
@@ -73,6 +73,7 @@ public class mongoBench {
 			writer1.println(timeOne);
 			System.out.println(timeOne);
 			System.out.println();
+			writer1.close();
 			break;
 		case 2:
 			// Count the number of companies founded in each year
@@ -88,9 +89,9 @@ public class mongoBench {
 			AggregateIterable<Document> outputTwo = 
 					this.coll.aggregate(Arrays.asList(objectTwo));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeTwo = "#2 Time Elapsed: " + duration + "ms.";
+			String timeTwo = "#2 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer2 = new PrintWriter("Q2Results.txt", "UTF-8");
 			outputTwo.forEach(new Block<Document>() {
 			    @Override
@@ -103,6 +104,7 @@ public class mongoBench {
 			writer2.println(timeTwo);
 			System.out.println(timeTwo);
 			System.out.println();
+			writer2.close();
 			break;
 		case 3:
 			// Project each distinct category code
@@ -114,9 +116,9 @@ public class mongoBench {
 						.filter(new Document("category_code",new Document("$ne",null)))
 							.into(new ArrayList<String>());
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeThree = "#3 Time Elapsed: " + duration + "ms.";
+			String timeThree = "#3 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer3 = new PrintWriter("Q3Results.txt", "UTF-8");
 			System.out.println("Distinct Category Codes: ");
 			for(String cat : distinctCategories){
@@ -127,6 +129,7 @@ public class mongoBench {
 			writer3.println(timeThree);
 			System.out.println(timeThree);
 			System.out.println();
+			writer3.close();
 			break;
 		case 4:
 			// Project the four URLs for each company
@@ -140,9 +143,9 @@ public class mongoBench {
 					this.coll.find().projection(include("crunchbase_url", 
 							"homepage_url", "blog_url", "blog_feed_url"));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeFour = "#4 Time Elapsed: " + duration + "ms.";
+			String timeFour = "#4 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer4 = new PrintWriter("Q4Results.txt", "UTF-8");
 			outputFour.forEach(new Block<Document>() {
 			    @Override
@@ -155,6 +158,7 @@ public class mongoBench {
 			writer4.println(timeFour);
 			System.out.println(timeFour);
 			System.out.println();
+			writer4.close();
 			break;
 		case 5:
 			// Project all companies that were founded after the year 2010 
@@ -163,9 +167,9 @@ public class mongoBench {
 			startTime = System.nanoTime();
 			FindIterable<Document> outputFive = this.coll.find(gt("founded_year", 2010));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeFive = "#5 Time Elapsed: " + duration + "ms.";
+			String timeFive = "#5 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer5 = new PrintWriter("Q5Results.txt", "UTF-8");
 			outputFive.forEach(new Block<Document>() {
 			    @Override
@@ -178,6 +182,7 @@ public class mongoBench {
 			writer5.println(timeFive);
 			System.out.println(timeFive);
 			System.out.println();
+			writer5.close();
 			break;
 			
 		/*** Querying Nested Documents ***/
@@ -193,9 +198,9 @@ public class mongoBench {
 					this.coll.distinct("acquisition.price_currency_code", String.class)
 						.into(new ArrayList<String>());		
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeSix = "#6 Time Elapsed: " + duration + "ms.";
+			String timeSix = "#6 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer6 = new PrintWriter("Q6Results.txt", "UTF-8");
 			System.out.println("Distinct Category Codes: ");
 			for(String code : distinctPriceCurrCode){
@@ -206,6 +211,7 @@ public class mongoBench {
 			writer6.println(timeSix);
 			System.out.println(timeSix);
 			System.out.println();
+			writer6.close();
 			break;
 		case 7:
 			// Return number of offices in each city,
@@ -228,9 +234,9 @@ public class mongoBench {
 			AggregateIterable<Document> outputSeven = 
 					this.coll.aggregate(Arrays.asList(project7, unwind7, group7));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeSeven = "#7 Time Elapsed: " + duration + "ms.";
+			String timeSeven = "#7 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer7 = new PrintWriter("Q7Results.txt", "UTF-8");
 			outputSeven.forEach(new Block<Document>() {
 			    @Override
@@ -243,6 +249,7 @@ public class mongoBench {
 			writer7.println(timeSeven);
 			System.out.println(timeSeven);
 			System.out.println();
+			writer7.close();
 			break;
 		case 8:
 			// Return each company name,
@@ -267,9 +274,9 @@ public class mongoBench {
 			AggregateIterable<Document> outputEight = 
 					this.coll.aggregate(Arrays.asList(project8, unwind8, group8));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeEight = "#8 Time Elapsed: " + duration + "ms.";
+			String timeEight = "#8 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer8 = new PrintWriter("Q8Results.txt", "UTF-8");
 			outputEight.forEach(new Block<Document>() {
 			    @Override
@@ -282,6 +289,7 @@ public class mongoBench {
 			writer8.println(timeEight);
 			System.out.println(timeEight);
 			System.out.println();
+			writer8.close();
 			break;
 		case 9:
 			// Return each company name and the total amount 
@@ -302,9 +310,9 @@ public class mongoBench {
 			AggregateIterable<Document> outputNine = 
 					this.coll.aggregate(Arrays.asList(unwind9, group9));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeNine = "#9 Time Elapsed: " + duration + "ms.";
+			String timeNine = "#9 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer9 = new PrintWriter("Q9Results.txt", "UTF-8");
 			outputNine.forEach(new Block<Document>() {
 			    @Override
@@ -317,6 +325,7 @@ public class mongoBench {
 			writer9.println(timeNine);
 			System.out.println(timeNine);
 			System.out.println();
+			writer9.close();
 			break;
 		case 10:
 			// Project all company records whose acquisition price amount
@@ -327,9 +336,9 @@ public class mongoBench {
 			FindIterable<Document> outputTen = 
 				this.coll.find(gt("acquisition.price_amount", 2000000000));
 			endTime = System.nanoTime();
-			duration = (endTime - startTime) / 1000000;
+			duration = (endTime - startTime) / 1000;
 			// Write results to file & print to console
-			String timeTen = "#10 Time Elapsed: " + duration + "ms.";
+			String timeTen = "#10 Time Elapsed: " + duration + "mu.";
 			PrintWriter writer10 = new PrintWriter("Q10Results.txt", "UTF-8");
 			outputTen.forEach(new Block<Document>() {
 			    @Override
@@ -342,6 +351,7 @@ public class mongoBench {
 			writer10.println(timeTen);
 			System.out.println(timeTen);
 			System.out.println();
+			writer10.close();
 			break;
 		}
 	}
